@@ -1,0 +1,1 @@
+# Exercicio2_embarcados_python_c
