@@ -19,12 +19,10 @@ print("Press  o atmosf  rica: " + str(dado.pressure))
 
 mylcd = RPi_I2C_driver.lcd()
 
-
-mylcd.lcd_display_string(dado.temperature + dado.pressure, 1)
-mylcd.lcd_display_string(dado.humidity, 2)
-
-sleep(2)
-
-mylcd.lcd_clear()
+while True:
+    mylcd.lcd_display_string(str("{:.2f}".format(dado.temperature),1) + str("{:.2f}".format(dado.pressure),1))
+    mylcd.lcd_display_string(str("{:.2f}".format(dado.temperature)), 2)
+    sleep(1)
+    mylcd.lcd_clear()
 
 
