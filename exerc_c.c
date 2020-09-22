@@ -353,12 +353,12 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
             media_hum += hum;
        	    print_sensor_data(&comp_data);
 	        printf("%s",asctime(timeinfo));
-            fprintf(file, "Medicao %d - Temperatura: %lf, Pressao: %lf, Umidade: %lf, Hora: %s", i, temp, press, hum, asctime(timeinfo));
+            fprintf(file, "Medicao %d - Temperatura: %lf, Pressao: %lf, Umidade: %lf, Hora: %s", i+1, temp, press, hum, asctime(timeinfo));
 	        i++;
 	        sleep(1);
 	}
 	else{
-            fprintf(file,"Medias - Temperatura =  %lf, Pressao = %lf, Umidade = %lf", media_temp, media_press, media_hum);
+            fprintf(file,"Medias - Temperatura =  %lf, Pressao = %lf, Umidade = %lf", media_temp/10.0, media_press/10.0, media_hum)/10.0;
             fclose(file);
 		    break;
 	    }
