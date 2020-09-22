@@ -140,8 +140,6 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev);
 int main(int argc, char* argv[])
 {
     struct bme280_dev dev;
-    time_t rawtime;
-    struct tm * timeinfo;
     struct identifier id;
 
     /* Make sure to select BME280_I2C_ADDR_PRIM or BME280_I2C_ADDR_SEC as needed */
@@ -311,13 +309,15 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
    
     time_t rawtime;
     struct tm * timeinfo;  
-    int contador = 0;
+    int i = 0;
 
     /* Continuously stream sensor data */
     while (1)
     {
-	
-	time (&rawtime);
+        FILE *file;
+        file = fopen("arquivo.csv","w");
+
+	    time (&rawtime);
         timeinfo = localtime (&rawtime);
 	
         /* Set the sensor to forced mode */
@@ -336,15 +336,20 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
             fprintf(stderr, "Failed to get sensor data (code %+d).", rslt);
             break;
         }
-	if(contador<10){
+	if(i<10){
+            float temp = comp_data.temperature;
+            float press = 0.01 * comp_data.pressure;
+            float hum = comp_data.humidity;
        	    print_sensor_data(&comp_data);
-	    printf("%s",asctime(timeinfo));
-	    contador++;
-	    sleep(1);
+	        printf("%s",asctime(timeinfo));
+            fprintf(file, "Temperatura: %lf, Pressao: %lf, Umidade: %lf, Hora: %s", temp, press, hum, asctime(timeinfo));
+	        i++;
+	        sleep(1);
 	}
 	else{
-		break;
-	}
+            fclose(file);
+		    break;
+	    }
     }
 
     return rslt;
