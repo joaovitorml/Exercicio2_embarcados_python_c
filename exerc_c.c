@@ -311,6 +311,14 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
     struct tm * timeinfo;  
     int i = 0;
 
+    FILE *file;
+    file = fopen("arquivo.csv","w");
+    fclose(file);
+
+    float media_temp = 0.0;
+    float media_press = 0.0;
+    float media_hum = 0.0;
+
     /* Continuously stream sensor data */
     while (1)
     {
@@ -338,15 +346,19 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
         }
 	if(i<10){
             float temp = comp_data.temperature;
+            media_temp += temp;
             float press = 0.01 * comp_data.pressure;
+            media_press += press;
             float hum = comp_data.humidity;
+            media_hum += hum;
        	    print_sensor_data(&comp_data);
 	        printf("%s",asctime(timeinfo));
-            fprintf(file, "Temperatura: %lf, Pressao: %lf, Umidade: %lf, Hora: %s", temp, press, hum, asctime(timeinfo));
+            fprintf(file, "Medicao %d - Temperatura: %lf, Pressao: %lf, Umidade: %lf, Hora: %s", i, temp, press, hum, asctime(timeinfo));
 	        i++;
 	        sleep(1);
 	}
 	else{
+            fprintf(file,"Medias - Temperatura =  %lf, Pressao = %lf, Umidade = %lf", media_temp, media_press, media_hum);
             fclose(file);
 		    break;
 	    }
