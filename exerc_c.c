@@ -35,6 +35,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <time.h>
+
 
 /******************************************************************************/
 /*!                         Own header files                                  */
@@ -138,7 +140,8 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev);
 int main(int argc, char* argv[])
 {
     struct bme280_dev dev;
-
+    time_t rawtime;
+    struct tm * timeinfo;
     struct identifier id;
 
     /* Make sure to select BME280_I2C_ADDR_PRIM or BME280_I2C_ADDR_SEC as needed */
@@ -305,10 +308,18 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
     /*Calculate the minimum delay required between consecutive measurement based upon the sensor enabled
      *  and the oversampling configuration. */
     req_delay = bme280_cal_meas_delay(&dev->settings);
+   
+    time_t rawtime;
+    struct tm * timeinfo;  
+    int contador = 0;
 
     /* Continuously stream sensor data */
     while (1)
     {
+	
+	time (&rawtime);
+        timeinfo = localtime (&rawtime);
+	
         /* Set the sensor to forced mode */
         rslt = bme280_set_sensor_mode(BME280_FORCED_MODE, dev);
         if (rslt != BME280_OK)
@@ -325,8 +336,15 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
             fprintf(stderr, "Failed to get sensor data (code %+d).", rslt);
             break;
         }
-
-        print_sensor_data(&comp_data);
+	if(contador<10){
+       	    print_sensor_data(&comp_data);
+	    printf("%s",asctime(timeinfo));
+	    contador++;
+	    sleep(1);
+	}
+	else{
+		break;
+	}
     }
 
     return rslt;
