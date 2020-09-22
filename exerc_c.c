@@ -315,7 +315,7 @@ int8_t stream_sensor_data_forced_mode(struct bme280_dev *dev)
     while (1)
     {
         FILE *file;
-        file = fopen("arquivo.csv","w");
+        file = fopen("arquivo.csv","a+");
 
 	    time (&rawtime);
         timeinfo = localtime (&rawtime);
